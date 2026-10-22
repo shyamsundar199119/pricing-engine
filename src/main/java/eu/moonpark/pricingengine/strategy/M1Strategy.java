@@ -2,6 +2,8 @@ package eu.moonpark.pricingengine.strategy;
 
 import eu.moonpark.pricingengine.exception.InvalidParkingRequestException;
 import eu.moonpark.pricingengine.model.ParkingRequestDto;
+import eu.moonpark.pricingengine.model.TariffZone;
+import eu.moonpark.pricingengine.validation.ParkingRequestValidator;
 
 import java.time.Duration;
 
@@ -12,18 +14,13 @@ public class M1Strategy implements PricingAgent {
     private static final long RATE_PER_MINUTE = RATE_PER_HOUR/60; // 1 NOK per started minute
 
     @Override
-    public long calculatePrice(ParkingRequestDto request) {
-        if (request == null || request.startTime() == null || request.endTime() == null || request.tariffZone() == null) {
-            throw new InvalidParkingRequestException(
-                    "Start time, end time or Tariff zone cannot be null"
-            );
-        }
+    public TariffZone supports() {
+        return TariffZone.M1;
+    }
 
-        if (request.endTime().isBefore(request.startTime())) {
-            throw new InvalidParkingRequestException(
-                    "End time cannot be before start time"
-            );
-        }
+    @Override
+    public long calculatePrice(ParkingRequestDto request) {
+        ParkingRequestValidator.validate(request, this);
 
         long durationSeconds = Duration.between(
                 request.startTime(),
