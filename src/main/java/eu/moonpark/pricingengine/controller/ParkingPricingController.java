@@ -1,0 +1,27 @@
+package eu.moonpark.pricingengine.controller;
+
+import eu.moonpark.pricingengine.dto.RateRequest;
+import eu.moonpark.pricingengine.dto.RateResponseDto;
+import eu.moonpark.pricingengine.service.ParkingPricingService;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping
+public class ParkingPricingController {
+
+    private final ParkingPricingService pricingService;
+
+    public ParkingPricingController(ParkingPricingService pricingService) {
+        this.pricingService = pricingService;
+    }
+
+    @GetMapping("/rate")
+    public RateResponseDto getRate(@Valid @ModelAttribute RateRequest request) {
+        // TODO: Implement request parameters and pricing logic.
+        return null;
+    }
+}
