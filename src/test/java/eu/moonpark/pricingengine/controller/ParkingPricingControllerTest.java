@@ -64,7 +64,9 @@ class ParkingPricingControllerTest {
         mockMvc.perform(get("/rate")
                         .param("endTime", "2026-10-26T11:00:00")
                         .param("tariffZone", "M1"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors").isArray())
+                .andExpect(jsonPath("$.errors[0]").exists());
     }
 
     @Test
@@ -72,7 +74,9 @@ class ParkingPricingControllerTest {
         mockMvc.perform(get("/rate")
                         .param("startTime", "2026-10-26T10:00:00")
                         .param("tariffZone", "M1"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors").isArray())
+                .andExpect(jsonPath("$.errors[0]").exists());
     }
 
     @Test
@@ -80,7 +84,9 @@ class ParkingPricingControllerTest {
         mockMvc.perform(get("/rate")
                         .param("startTime", "2026-10-26T10:00:00")
                         .param("endTime", "2026-10-26T11:00:00"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors").isArray())
+                .andExpect(jsonPath("$.errors[0]").exists());
     }
 
     @Test
@@ -89,7 +95,9 @@ class ParkingPricingControllerTest {
                         .param("startTime", "not-a-date")
                         .param("endTime", "2026-10-26T11:00:00")
                         .param("tariffZone", "M1"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors").isArray())
+                .andExpect(jsonPath("$.errors[0]").exists());
     }
 
     @Test
@@ -98,7 +106,9 @@ class ParkingPricingControllerTest {
                         .param("startTime", "2026-10-26T10:00:00")
                         .param("endTime", "2026-10-26T11:00:00")
                         .param("tariffZone", "M9"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors").isArray())
+                .andExpect(jsonPath("$.errors[0]").exists());
     }
 
     @Test
@@ -107,14 +117,14 @@ class ParkingPricingControllerTest {
 
         when(pricingService.calculatePrice(any(ParkingRequestDto.class)))
                 .thenThrow(new InvalidParkingRequestException(
-                        "End time cannot be before start time"
-                ));
+                        "End time cannot be before start time"));
 
         mockMvc.perform(get("/rate")
                         .param("startTime", "2026-10-26T11:00:00")
                         .param("endTime", "2026-10-26T10:00:00")
                         .param("tariffZone", "M1"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("End time cannot be before start time"));
+                .andExpect(jsonPath("$.errors[0]")
+                        .value("End time cannot be before start time"));
     }
 }

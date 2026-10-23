@@ -9,6 +9,11 @@ public final class ParkingRequestValidator {
     }
 
     public static void validate(ParkingRequestDto request) {
+        if (request == null) {
+            throw new InvalidParkingRequestException(
+                    "Parking request cannot be null");
+        }
+
         if (request.endTime().isBefore(request.startTime())) {
             throw new InvalidParkingRequestException("End time cannot be before start time");
         }
