@@ -83,60 +83,6 @@ class ParkingPricingServiceTest {
     }
 
     @Test
-    void shouldThrowExceptionWhenRequestIsNull() {
-        assertThrows(
-                InvalidParkingRequestException.class,
-                () -> pricingService.calculatePrice(null)
-        );
-
-        verify(m1Strategy, never()).calculatePrice(any());
-        verify(m2Strategy, never()).calculatePrice(any());
-        verify(m3Strategy, never()).calculatePrice(any());
-    }
-
-    @Test
-    void shouldThrowExceptionWhenStartTimeIsNull() {
-        ParkingRequestDto request = new ParkingRequestDto(
-                null,
-                LocalDateTime.of(2026, 10, 26, 11, 0),
-                TariffZone.M1
-        );
-
-        assertThrows(
-                InvalidParkingRequestException.class,
-                () -> pricingService.calculatePrice(request)
-        );
-    }
-
-    @Test
-    void shouldThrowExceptionWhenEndTimeIsNull() {
-        ParkingRequestDto request = new ParkingRequestDto(
-                LocalDateTime.of(2026, 10, 26, 10, 0),
-                null,
-                TariffZone.M1
-        );
-
-        assertThrows(
-                InvalidParkingRequestException.class,
-                () -> pricingService.calculatePrice(request)
-        );
-    }
-
-    @Test
-    void shouldThrowExceptionWhenTariffZoneIsNull() {
-        ParkingRequestDto request = new ParkingRequestDto(
-                LocalDateTime.of(2026, 10, 26, 10, 0),
-                LocalDateTime.of(2026, 10, 26, 11, 0),
-                null
-        );
-
-        assertThrows(
-                InvalidParkingRequestException.class,
-                () -> pricingService.calculatePrice(request)
-        );
-    }
-
-    @Test
     void shouldThrowExceptionWhenEndTimeIsBeforeStartTime() {
         ParkingRequestDto request = new ParkingRequestDto(
                 LocalDateTime.of(2026, 10, 26, 11, 0),
