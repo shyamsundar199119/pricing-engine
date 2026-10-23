@@ -47,7 +47,6 @@ class ParkingPricingServiceTest {
 
         assertEquals(60L, price);
         verify(m1Strategy).calculatePrice(request);
-        verifyNoInteractions(m2Strategy, m3Strategy);
 
         verify(m2Strategy, never()).calculatePrice(any());
         verify(m3Strategy, never()).calculatePrice(any());
@@ -90,7 +89,37 @@ class ParkingPricingServiceTest {
                 () -> pricingService.calculatePrice(null)
         );
 
-        verifyNoInteractions(m1Strategy, m2Strategy, m3Strategy);
+        verify(m1Strategy, never()).calculatePrice(any());
+        verify(m2Strategy, never()).calculatePrice(any());
+        verify(m3Strategy, never()).calculatePrice(any());
+    }
+
+    @Test
+    void shouldThrowExceptionWhenStartTimeIsNull() {
+        ParkingRequestDto request = new ParkingRequestDto(
+                null,
+                LocalDateTime.of(2026, 10, 26, 11, 0),
+                TariffZone.M1
+        );
+
+        assertThrows(
+                InvalidParkingRequestException.class,
+                () -> pricingService.calculatePrice(request)
+        );
+    }
+
+    @Test
+    void shouldThrowExceptionWhenEndTimeIsNull() {
+        ParkingRequestDto request = new ParkingRequestDto(
+                LocalDateTime.of(2026, 10, 26, 10, 0),
+                null,
+                TariffZone.M1
+        );
+
+        assertThrows(
+                InvalidParkingRequestException.class,
+                () -> pricingService.calculatePrice(request)
+        );
     }
 
     @Test
@@ -105,8 +134,20 @@ class ParkingPricingServiceTest {
                 InvalidParkingRequestException.class,
                 () -> pricingService.calculatePrice(request)
         );
+    }
 
-        verifyNoInteractions(m1Strategy, m2Strategy, m3Strategy);
+    @Test
+    void shouldThrowExceptionWhenEndTimeIsBeforeStartTime() {
+        ParkingRequestDto request = new ParkingRequestDto(
+                LocalDateTime.of(2026, 10, 26, 11, 0),
+                LocalDateTime.of(2026, 10, 26, 10, 0),
+                TariffZone.M1
+        );
+
+        assertThrows(
+                InvalidParkingRequestException.class,
+                () -> pricingService.calculatePrice(request)
+        );
     }
 
     @Test

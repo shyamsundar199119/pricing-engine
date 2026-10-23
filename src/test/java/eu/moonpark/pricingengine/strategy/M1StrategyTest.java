@@ -95,40 +95,5 @@ class M1StrategyTest {
         assertEquals(1440, pricingAgent.calculatePrice(
                 createRequest(startTime, startTime.plusHours(24))));
     }
-
-    //Negative test cases
-
-    @Test
-    void shouldRejectNullRequest() {
-        assertThrows(InvalidParkingRequestException.class,
-                () -> pricingAgent.calculatePrice(null));
-    }
-
-    @Test
-    void shouldRejectNullStartTime() {
-        assertThrows(InvalidParkingRequestException.class,
-                () -> pricingAgent.calculatePrice(createRequest(null, startTime.plusMinutes(1))));
-    }
-
-    @Test
-    void shouldRejectNullEndTime() {
-        assertThrows(InvalidParkingRequestException.class,
-                () -> pricingAgent.calculatePrice(createRequest(startTime, null)));
-    }
-
-    @Test
-    void shouldRejectEndTimeBeforeStartTime() {
-        assertThrows(InvalidParkingRequestException.class,
-                () -> pricingAgent.calculatePrice(createRequest(startTime, startTime.minusMinutes(1))));
-    }
-
-    @Test
-    void shouldRejectNullTariffZone() {
-        assertThrows(InvalidParkingRequestException.class,
-                () -> pricingAgent.calculatePrice(new ParkingRequestDto(
-                        startTime,
-                        startTime.plusMinutes(1),
-                        null)));
-    }
 }
 

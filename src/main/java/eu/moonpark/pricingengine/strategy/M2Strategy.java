@@ -2,7 +2,6 @@ package eu.moonpark.pricingengine.strategy;
 
 import eu.moonpark.pricingengine.model.ParkingRequestDto;
 import eu.moonpark.pricingengine.model.TariffZone;
-import eu.moonpark.pricingengine.validation.ParkingRequestValidator;
 import org.springframework.stereotype.Component;
 
 import java.time.DayOfWeek;
@@ -22,7 +21,6 @@ public class M2Strategy implements PricingAgent {
 
     @Override
     public long calculatePrice(ParkingRequestDto request) {
-        ParkingRequestValidator.validate(request, this);
 
         long durationSeconds = Duration.between(
                 request.startTime(),

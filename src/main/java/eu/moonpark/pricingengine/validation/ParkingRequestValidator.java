@@ -9,7 +9,7 @@ public final class ParkingRequestValidator {
         // Utility class; prevent instantiation.
     }
 
-    public static void validate(ParkingRequestDto request, PricingAgent pricingAgent) {
+    public static void validate(ParkingRequestDto request) {
         if (request == null || request.startTime() == null || request.endTime() == null || request.tariffZone() == null) {
             throw new InvalidParkingRequestException(
                     "Start time, end time or Tariff zone cannot be null"
@@ -19,19 +19,6 @@ public final class ParkingRequestValidator {
         if (request.endTime().isBefore(request.startTime())) {
             throw new InvalidParkingRequestException(
                     "End time cannot be before start time"
-            );
-        }
-
-        if (request.tariffZone() == null) {
-            throw new InvalidParkingRequestException(
-                    "Tariff zone is required"
-            );
-        }
-
-        if (request.tariffZone() != pricingAgent.supports()) {
-            throw new InvalidParkingRequestException(
-                    "This strategy supports tariff zone "
-                            + pricingAgent.supports()
             );
         }
     }
