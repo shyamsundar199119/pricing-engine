@@ -3,10 +3,12 @@ package eu.moonpark.pricingengine.strategy;
 import eu.moonpark.pricingengine.model.ParkingRequestDto;
 import eu.moonpark.pricingengine.model.TariffZone;
 import eu.moonpark.pricingengine.validation.ParkingRequestValidator;
+import org.springframework.stereotype.Component;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
 
+@Component
 public class M2Strategy implements PricingAgent {
 
     private static final long WEEKDAY_RATE = 100;

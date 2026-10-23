@@ -4,9 +4,11 @@ import eu.moonpark.pricingengine.exception.InvalidParkingRequestException;
 import eu.moonpark.pricingengine.model.ParkingRequestDto;
 import eu.moonpark.pricingengine.model.TariffZone;
 import eu.moonpark.pricingengine.validation.ParkingRequestValidator;
+import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 
+@Component
 public class M1Strategy implements PricingAgent {
 
     private static final long RATE_PER_HOUR = 60; // 60 NOK per hour
