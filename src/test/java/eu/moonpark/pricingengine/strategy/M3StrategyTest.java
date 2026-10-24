@@ -1,18 +1,24 @@
 package eu.moonpark.pricingengine.strategy;
 
+import eu.moonpark.pricingengine.config.PricingProperties;
 import eu.moonpark.pricingengine.model.ParkingRequestDto;
-import eu.moonpark.pricingengine.exception.InvalidParkingRequestException;
 import eu.moonpark.pricingengine.model.TariffZone;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@SpringBootTest
 class M3StrategyTest {
 
-    private final PricingAgent pricingAgent = new M3Strategy();
+    @Autowired
+    private PricingProperties properties;
+
+    private PricingAgent pricingAgent;
 
     // Monday, October 26, 2026
     private final LocalDateTime monday =
@@ -26,6 +32,10 @@ class M3StrategyTest {
     private final LocalDateTime sunday =
             LocalDateTime.of(2026, 10, 25, 10, 0);
 
+    @BeforeEach
+    void setUp() {
+        pricingAgent = new M3Strategy(properties);
+    }
     private ParkingRequestDto createRequest(
             LocalDateTime start,
             LocalDateTime end) {

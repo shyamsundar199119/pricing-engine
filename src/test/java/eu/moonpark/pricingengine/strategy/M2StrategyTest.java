@@ -1,18 +1,29 @@
 package eu.moonpark.pricingengine.strategy;
 
+import eu.moonpark.pricingengine.config.PricingProperties;
 import eu.moonpark.pricingengine.model.ParkingRequestDto;
-import eu.moonpark.pricingengine.exception.InvalidParkingRequestException;
 import eu.moonpark.pricingengine.model.TariffZone;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@SpringBootTest
 class M2StrategyTest {
 
-    private final PricingAgent pricingAgent = new M2Strategy();
+    @Autowired
+    private PricingProperties properties;
+
+    private PricingAgent pricingAgent;
+
+    @BeforeEach
+    void setUp() {
+        pricingAgent = new M2Strategy(properties);
+    }
 
     // Monday
     private final LocalDateTime weekday =

@@ -1,5 +1,6 @@
 package eu.moonpark.pricingengine.strategy;
 
+import eu.moonpark.pricingengine.config.PricingProperties;
 import eu.moonpark.pricingengine.model.ParkingRequestDto;
 import eu.moonpark.pricingengine.model.TariffZone;
 import lombok.extern.slf4j.Slf4j;
@@ -12,13 +13,13 @@ import java.time.LocalDateTime;
 @Component
 @Slf4j
 public class M3Strategy implements PricingAgent {
-
-    private static final long FREE_MINUTES = 60;
-    private static final long DAYTIME_RATE_PER_MINUTE = 2;
-    private static final long OUTSIDE_DAYTIME_RATE_PER_MINUTE = 3;
-    private static final int DAYTIME_START_HOUR = 8;
-    private static final int DAYTIME_END_HOUR = 16;
     private static final long SECONDS_PER_MINUTE = 60;
+
+    private final PricingProperties properties;
+
+    public M3Strategy(PricingProperties properties) {
+        this.properties = properties;
+    }
 
     @Override
     public TariffZone supports() {
@@ -56,7 +57,9 @@ public class M3Strategy implements PricingAgent {
     }
 
     private long calculateDaytimePrice(long durationSeconds) {
-        long freeSeconds = FREE_MINUTES * SECONDS_PER_MINUTE;
+        int freeMinutes = properties.m3FreeMinutes();
+
+        long freeSeconds = freeMinutes * SECONDS_PER_MINUTE;
 
         if (durationSeconds <= freeSeconds) {
             return 0;
@@ -64,14 +67,15 @@ public class M3Strategy implements PricingAgent {
 
         long paidSeconds = durationSeconds - freeSeconds;
         long startedMinutes = ceilDiv(paidSeconds, SECONDS_PER_MINUTE);
+        long daytimeRate = properties.m3PricePerMinuteDaytime();
 
-        return startedMinutes * DAYTIME_RATE_PER_MINUTE;
+        return startedMinutes * daytimeRate;
     }
 
     private long calculateOutsideDaytimePrice(long durationSeconds) {
         long startedMinutes = ceilDiv(durationSeconds, SECONDS_PER_MINUTE);
-
-        return startedMinutes * OUTSIDE_DAYTIME_RATE_PER_MINUTE;
+        long outsideDaytimeRate = properties.m3PricePerMinuteOutsideDaytime();
+        return startedMinutes * outsideDaytimeRate;
     }
 
     private boolean isSunday(LocalDateTime startTime) {
@@ -80,9 +84,10 @@ public class M3Strategy implements PricingAgent {
 
     private boolean isDaytime(LocalDateTime startTime) {
         int hour = startTime.getHour();
-
-        return hour >= DAYTIME_START_HOUR
-                && hour < DAYTIME_END_HOUR;
+        int daytimeStart = properties.m3DaytimeStart();
+        int daytimeEnd = properties.m3DaytimeEnd();
+        return hour >= daytimeStart
+                && hour < daytimeEnd;
     }
 
     private long ceilDiv(long value, long divisor) {

@@ -1,5 +1,6 @@
 package eu.moonpark.pricingengine.strategy;
 
+import eu.moonpark.pricingengine.config.PricingProperties;
 import eu.moonpark.pricingengine.model.ParkingRequestDto;
 import eu.moonpark.pricingengine.model.TariffZone;
 import lombok.extern.slf4j.Slf4j;
@@ -11,10 +12,12 @@ import java.time.Duration;
 @Slf4j
 @Component
 public class M2Strategy implements PricingAgent {
-
-    private static final long WEEKDAY_RATE = 100;
-    private static final long WEEKEND_RATE = 200;
     private static final long SECONDS_PER_HOUR = 3600;
+    private final PricingProperties properties;
+
+    public M2Strategy(PricingProperties properties) {
+        this.properties = properties;
+    }
 
     @Override
     public TariffZone supports() {
@@ -40,8 +43,8 @@ public class M2Strategy implements PricingAgent {
         DayOfWeek day = request.startTime().getDayOfWeek();
 
         long hourlyRate = isWeekend(day)
-                ? WEEKEND_RATE
-                : WEEKDAY_RATE;
+                ? properties.m2WeekendPricePerHour()
+                : properties.m2WeekdayPricePerHour();
 
         return startedHours * hourlyRate;
     }
