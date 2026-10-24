@@ -2,6 +2,8 @@ package eu.moonpark.pricingengine.exception;
 
 import eu.moonpark.pricingengine.dto.ErrorResponse;
 import java.util.List;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -16,6 +19,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleInvalidParkingRequest(
             InvalidParkingRequestException exception) {
 
+        log.warn("Invalid parking request: {}", exception.getMessage());
         return ResponseEntity.badRequest()
                 .body(new ErrorResponse(List.of(exception.getMessage())));
     }
@@ -30,6 +34,7 @@ public class GlobalExceptionHandler {
                 .map(error -> error.getDefaultMessage())
                 .distinct()
                 .toList();
+        log.warn("Request validation error: {}", errors);
 
         return ResponseEntity.badRequest()
                 .body(new ErrorResponse(errors));
@@ -52,6 +57,8 @@ public class GlobalExceptionHandler {
                 .distinct()
                 .toList();
 
+        log.warn("Request parameter binding error: {}", errors);
+
         if (errors.isEmpty()) {
             errors = List.of("Invalid request parameters");
         }
@@ -66,6 +73,18 @@ public class GlobalExceptionHandler {
 
         String message = "Invalid value for parameter: "
                 + exception.getName();
+        log.warn("Request parameter type mismatch: {}", message);
+
+        return ResponseEntity.badRequest()
+                .body(new ErrorResponse(List.of(message)));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleTypeMismatch(
+            Exception exception) {
+        log.error("Unexpected error occurred", exception);
+        String message = "Unexpected error occurred: "
+                + exception.getMessage();
 
         return ResponseEntity.badRequest()
                 .body(new ErrorResponse(List.of(message)));
