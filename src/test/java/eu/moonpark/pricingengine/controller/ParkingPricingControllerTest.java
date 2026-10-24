@@ -27,7 +27,7 @@ class ParkingPricingControllerTest {
     void shouldReturnPriceForM1Request() throws Exception {
         when(pricingService.calculatePrice(any())).thenReturn(60L);
 
-        mockMvc.perform(get("/rate")
+        mockMvc.perform(get("/v1/rate")
                         .param("startTime", "2026-10-26T10:00:00")
                         .param("endTime", "2026-10-26T11:00:00")
                         .param("tariffZone", "M1"))
@@ -39,7 +39,7 @@ class ParkingPricingControllerTest {
     void shouldReturnPriceForM2Request() throws Exception {
         when(pricingService.calculatePrice(any())).thenReturn(100L);
 
-        mockMvc.perform(get("/rate")
+        mockMvc.perform(get("/v1/rate")
                         .param("startTime", "2026-10-26T10:00:00")
                         .param("endTime", "2026-10-26T11:00:00")
                         .param("tariffZone", "M2"))
@@ -51,7 +51,7 @@ class ParkingPricingControllerTest {
     void shouldReturnPriceForM3Request() throws Exception {
         when(pricingService.calculatePrice(any())).thenReturn(0L);
 
-        mockMvc.perform(get("/rate")
+        mockMvc.perform(get("/v1/rate")
                         .param("startTime", "2026-10-26T10:00:00")
                         .param("endTime", "2026-10-26T11:00:00")
                         .param("tariffZone", "M3"))
@@ -61,7 +61,7 @@ class ParkingPricingControllerTest {
 
     @Test
     void shouldReturnBadRequestWhenStartTimeIsMissing() throws Exception {
-        mockMvc.perform(get("/rate")
+        mockMvc.perform(get("/v1/rate")
                         .param("endTime", "2026-10-26T11:00:00")
                         .param("tariffZone", "M1"))
                 .andExpect(status().isBadRequest())
@@ -71,7 +71,7 @@ class ParkingPricingControllerTest {
 
     @Test
     void shouldReturnBadRequestWhenEndTimeIsMissing() throws Exception {
-        mockMvc.perform(get("/rate")
+        mockMvc.perform(get("/v1/rate")
                         .param("startTime", "2026-10-26T10:00:00")
                         .param("tariffZone", "M1"))
                 .andExpect(status().isBadRequest())
@@ -81,7 +81,7 @@ class ParkingPricingControllerTest {
 
     @Test
     void shouldReturnBadRequestWhenTariffZoneIsMissing() throws Exception {
-        mockMvc.perform(get("/rate")
+        mockMvc.perform(get("/v1/rate")
                         .param("startTime", "2026-10-26T10:00:00")
                         .param("endTime", "2026-10-26T11:00:00"))
                 .andExpect(status().isBadRequest())
@@ -91,7 +91,7 @@ class ParkingPricingControllerTest {
 
     @Test
     void shouldReturnBadRequestWhenStartTimeIsInvalid() throws Exception {
-        mockMvc.perform(get("/rate")
+        mockMvc.perform(get("/v1/rate")
                         .param("startTime", "not-a-date")
                         .param("endTime", "2026-10-26T11:00:00")
                         .param("tariffZone", "M1"))
@@ -102,7 +102,7 @@ class ParkingPricingControllerTest {
 
     @Test
     void shouldReturnBadRequestWhenTariffZoneIsInvalid() throws Exception {
-        mockMvc.perform(get("/rate")
+        mockMvc.perform(get("/v1/rate")
                         .param("startTime", "2026-10-26T10:00:00")
                         .param("endTime", "2026-10-26T11:00:00")
                         .param("tariffZone", "M9"))
@@ -119,7 +119,7 @@ class ParkingPricingControllerTest {
                 .thenThrow(new InvalidParkingRequestException(
                         "End time cannot be before start time"));
 
-        mockMvc.perform(get("/rate")
+        mockMvc.perform(get("/v1/rate")
                         .param("startTime", "2026-10-26T11:00:00")
                         .param("endTime", "2026-10-26T10:00:00")
                         .param("tariffZone", "M1"))

@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping
-public class ParkingPricingController {
+@RequestMapping("/v1")
+public class ParkingPricingController implements ParkingPricingApi {
 
     private final ParkingPricingService pricingService;
 
@@ -20,7 +20,7 @@ public class ParkingPricingController {
         this.pricingService = pricingService;
     }
 
-    @GetMapping("/rate")
+    @Override
     public RateResponseDto getRate(@Valid @ModelAttribute RateRequest request) {
         ParkingRequestDto parkingRequest = new ParkingRequestDto(
                 request.startTime(),
