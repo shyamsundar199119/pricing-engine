@@ -1,11 +1,15 @@
 package eu.moonpark.pricingengine.service;
 
+import eu.moonpark.pricingengine.config.PricingProperties;
 import eu.moonpark.pricingengine.model.ParkingRequestDto;
 import eu.moonpark.pricingengine.exception.InvalidParkingRequestException;
+import eu.moonpark.pricingengine.model.PricingResult;
 import eu.moonpark.pricingengine.strategy.PricingAgent;
 import eu.moonpark.pricingengine.model.TariffZone;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
+@SpringBootTest
 class ParkingPricingServiceTest {
 
     private PricingAgent m1Strategy;
@@ -21,6 +26,9 @@ class ParkingPricingServiceTest {
     private PricingAgent m3Strategy;
 
     private ParkingPricingService pricingService;
+
+    @Autowired
+    private PricingProperties properties;
 
     @BeforeEach
     void setUp() {
@@ -33,7 +41,7 @@ class ParkingPricingServiceTest {
         when(m3Strategy.supports()).thenReturn(TariffZone.M3);
 
         pricingService = new ParkingPricingService(
-                List.of(m1Strategy, m2Strategy, m3Strategy)
+                List.of(m1Strategy, m2Strategy, m3Strategy),properties
         );
     }
 
@@ -43,9 +51,9 @@ class ParkingPricingServiceTest {
 
         when(m1Strategy.calculatePrice(request)).thenReturn(60L);
 
-        long price = pricingService.calculatePrice(request);
+        PricingResult result = pricingService.calculatePrice(request);
 
-        assertEquals(60L, price);
+        assertEquals(60L, result.price());
         verify(m1Strategy).calculatePrice(request);
 
         verify(m2Strategy, never()).calculatePrice(any());
@@ -58,9 +66,9 @@ class ParkingPricingServiceTest {
 
         when(m2Strategy.calculatePrice(request)).thenReturn(100L);
 
-        long price = pricingService.calculatePrice(request);
+        PricingResult result = pricingService.calculatePrice(request);
 
-        assertEquals(100L, price);
+        assertEquals(100L, result.price());
         verify(m2Strategy).calculatePrice(request);
 
         verify(m1Strategy, never()).calculatePrice(any());
@@ -73,9 +81,9 @@ class ParkingPricingServiceTest {
 
         when(m3Strategy.calculatePrice(request)).thenReturn(0L);
 
-        long price = pricingService.calculatePrice(request);
+        PricingResult result = pricingService.calculatePrice(request);
 
-        assertEquals(0L, price);
+        assertEquals(0L, result.price());
         verify(m3Strategy).calculatePrice(request);
 
         verify(m1Strategy, never()).calculatePrice(any());
@@ -99,7 +107,7 @@ class ParkingPricingServiceTest {
     @Test
     void shouldThrowExceptionWhenNoStrategySupportsTariffZone() {
         ParkingPricingService serviceWithoutStrategies =
-                new ParkingPricingService(List.of());
+                new ParkingPricingService(List.of(),properties);
 
         ParkingRequestDto request = createRequest(TariffZone.M1);
 

@@ -1,7 +1,7 @@
 package eu.moonpark.pricingengine.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import java.time.LocalTime;
+import java.util.Currency;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 @ConfigurationProperties(prefix = "pricing")
@@ -29,6 +29,9 @@ public record PricingProperties(
         int m3DaytimeStart,
 
         @DefaultValue("16")
-        int m3DaytimeEnd
+        int m3DaytimeEnd,
+
+        @DefaultValue("NOK")
+        Currency currency
 
 ) {}

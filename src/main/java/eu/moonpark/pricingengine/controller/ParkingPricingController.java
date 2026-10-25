@@ -3,9 +3,9 @@ package eu.moonpark.pricingengine.controller;
 import eu.moonpark.pricingengine.dto.RateRequest;
 import eu.moonpark.pricingengine.dto.RateResponseDto;
 import eu.moonpark.pricingengine.model.ParkingRequestDto;
+import eu.moonpark.pricingengine.model.PricingResult;
 import eu.moonpark.pricingengine.service.ParkingPricingService;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,7 +28,7 @@ public class ParkingPricingController implements ParkingPricingApi {
                 request.tariffZone()
         );
 
-        long price = pricingService.calculatePrice(parkingRequest);
-        return new RateResponseDto(price);
+        PricingResult result = pricingService.calculatePrice(parkingRequest);
+        return new RateResponseDto(result.price());
     }
 }

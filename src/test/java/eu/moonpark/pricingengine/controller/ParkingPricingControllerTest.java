@@ -2,12 +2,16 @@ package eu.moonpark.pricingengine.controller;
 
 import eu.moonpark.pricingengine.exception.InvalidParkingRequestException;
 import eu.moonpark.pricingengine.model.ParkingRequestDto;
+import eu.moonpark.pricingengine.model.PricingResult;
 import eu.moonpark.pricingengine.service.ParkingPricingService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.Currency;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -25,7 +29,7 @@ class ParkingPricingControllerTest {
 
     @Test
     void shouldReturnPriceForM1Request() throws Exception {
-        when(pricingService.calculatePrice(any())).thenReturn(60L);
+        when(pricingService.calculatePrice(any())).thenReturn(new PricingResult(60L, Currency.getInstance("NOK")));
 
         mockMvc.perform(get("/v1/rate")
                         .param("startTime", "2026-10-26T10:00:00")
@@ -37,7 +41,7 @@ class ParkingPricingControllerTest {
 
     @Test
     void shouldReturnPriceForM2Request() throws Exception {
-        when(pricingService.calculatePrice(any())).thenReturn(100L);
+        when(pricingService.calculatePrice(any())).thenReturn(new PricingResult(100L, Currency.getInstance("NOK")));
 
         mockMvc.perform(get("/v1/rate")
                         .param("startTime", "2026-10-26T10:00:00")
@@ -49,7 +53,7 @@ class ParkingPricingControllerTest {
 
     @Test
     void shouldReturnPriceForM3Request() throws Exception {
-        when(pricingService.calculatePrice(any())).thenReturn(0L);
+        when(pricingService.calculatePrice(any())).thenReturn(new PricingResult(0L, Currency.getInstance("NOK")));
 
         mockMvc.perform(get("/v1/rate")
                         .param("startTime", "2026-10-26T10:00:00")
